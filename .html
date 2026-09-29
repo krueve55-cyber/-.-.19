@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ทะเบียนคุมการประชุม-อบรม-สัมมนา - โรงเรียนบ้านน้ำสวยมิตรภาพที่ 19</title>
+    
+    <!-- Google Font: Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Flatpickr (Date Range Picker + Thai) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #fdf2f8 100%);
+        }
+        .flatpickr-calendar {
+            border-radius: 1rem !important;
+            box-shadow: 0 20px 25px -5px rgba(236, 72, 153, 0.1), 0 8px 10px -6px rgba(37, 99, 235, 0.1) !important;
+            border: 1px solid #fbcfe8 !important;
+            font-family: 'Prompt', sans-serif !important;
+        }
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: #db2777 !important;
+            border-color: #db2777 !important;
+        }
+        .flatpickr-day.inRange {
+            background: #fce7f3 !important;
+            box-shadow: -5px 0 0 #fce7f3, 5px 0 0 #fce7f3 !important;
+            color: #9d174d !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-4xl mx-auto">
+        <!-- Header Banner Card -->
+        <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-900 via-blue-800 to-pink-600 p-6 sm:p-8 text-white shadow-xl shadow-blue-900/20 mb-8">
+            <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-pink-500/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -top-10 w-48 h-48 bg-blue-400/20 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <!-- เมนูมุมบนขวา: รายการที่บันทึก -->
+            <div class="flex justify-end mb-4 sm:mb-0 sm:absolute sm:top-6 sm:right-6 z-20">
+                <button id="viewRecordsBtn" onclick="openRecordsModal()" 
+                    class="group relative inline-flex items-center gap-2.5 px-4 py-2 bg-white/15 hover:bg-white/25 active:bg-white/30 backdrop-blur-md border border-white/25 rounded-2xl text-xs sm:text-sm font-medium text-white transition-all duration-200 shadow-md hover:shadow-lg">
+                    <i data-lucide="folder-check" class="w-4 h-4 text-pink-300 group-hover:scale-110 transition-transform"></i>
+                    <span>รายการที่บันทึก</span>
+                    <span id="recordBadge" class="ml-1 px-2 py-0.5 rounded-full bg-pink-500 text-white text-xs font-bold shadow-inner">
+                        ...
+                    </span>
+                </button>
+            </div>
+
+            <div class="relative z-10 text-center sm:text-left flex flex-col sm:flex-row items-center gap-6">
+                <!-- LOGO โรงเรียน -->
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center shrink-0 shadow-lg overflow-hidden p-2">
+                    <img src="https://i.postimg.cc/vgQT5jhH/logo.png" alt="Logo โรงเรียน" class="w-full h-full object-contain filter drop-shadow-md" onerror="this.onerror=null; this.src='https://postimg.cc/vgQT5jhH';">
+                </div>
+                <div>
+                    <span class="inline-block px-3 py-1 rounded-full bg-pink-500/30 border border-pink-300/30 text-xs font-medium text-pink-100 mb-2">
+                        ระบบติดตามข้อมูลการพัฒนาบุคลากร
+                    </span>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white leading-snug">
+                        ทะเบียนคุมการประชุม - อบรม - สัมมนา
+                    </h1>
+                    <p class="text-blue-100 text-sm sm:text-base mt-1 flex items-center justify-center sm:justify-start gap-2">
+                        <i data-lucide="school" class="w-4 h-4 text-pink-300"></i>
+                        ภายใน/ภายนอกหน่วยงาน • โรงเรียนบ้านน้ำสวยมิตรภาพที่ 19
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl shadow-slate-200/60 border border-pink-100/80 p-6 sm:p-10">
+            <form id="trainingForm" class="space-y-6" novalidate>
+                
+                <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
+                    <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-sm">
+                        <i data-lucide="file-edit" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-lg font-semibold text-slate-800">กรอกข้อมูลการอบรม/สัมมนา</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- 1. วันที่ -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-blue-600"></i>
+                            1. วันที่อบรม (เริ่มต้น - สิ้นสุด) <span class="text-pink-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="text" id="dateRange" required 
+                                class="w-full pl-11 pr-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                                placeholder="เลือกช่วงวันที่อบรม">
+                            <i data-lucide="calendar-days" class="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5"></i>
+                        </div>
+                    </div>
+
+                    <!-- 2. ชื่อ - สกุล -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="user" class="w-4 h-4 text-blue-600"></i>
+                            2. ชื่อ - สกุล <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="name" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="เช่น นายสมชาย ใจดี">
+                    </div>
+
+                    <!-- 3. ตำแหน่ง -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="briefcase" class="w-4 h-4 text-blue-600"></i>
+                            3. ตำแหน่ง <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="position" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="เช่น ครู, ครูผู้ช่วย">
+                    </div>
+
+                    <!-- 4. วิทยฐานะ -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="medal" class="w-4 h-4 text-blue-600"></i>
+                            4. วิทยฐานะ <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="rank" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="เช่น ชำนาญการพิเศษ, ไม่มี">
+                    </div>
+
+                    <!-- 5. เรื่อง/หลักสูตร -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="book-open" class="w-4 h-4 text-blue-600"></i>
+                            5. เรื่อง / หลักสูตร <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="topic" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="ระบุชื่อเรื่องหรือหลักสูตรอบรม">
+                    </div>
+
+                    <!-- 6. หน่วยงานที่จัดอบรม -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="building-2" class="w-4 h-4 text-blue-600"></i>
+                            6. หน่วยงานที่จัดอบรม <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="organizer" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="เช่น สพป. หนองคาย เขต 1">
+                    </div>
+
+                    <!-- 7. สถานที่อบรม -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="map-pin" class="w-4 h-4 text-blue-600"></i>
+                            7. สถานที่อบรม <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="location" required 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="ระบุสถานที่ หรือ ออนไลน์ (Zoom/Meet)">
+                    </div>
+
+                    <!-- 8. หลักฐานการอบรม -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="image" class="w-4 h-4 text-pink-600"></i>
+                            8. หลักฐานการอบรม (.JPG, .PNG) <span class="text-pink-500">*</span>
+                        </label>
+                        
+                        <div class="relative border-2 border-dashed border-pink-200 hover:border-pink-400 rounded-2xl p-6 text-center bg-pink-50/30 transition-all duration-200 group">
+                            <input type="file" id="evidence" accept=".jpg, .jpeg, .png" required 
+                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                            
+                            <div id="uploadPlaceholder" class="space-y-2">
+                                <div class="w-12 h-12 rounded-full bg-pink-100 text-pink-600 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                                    <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+                                </div>
+                                <p class="text-sm font-medium text-slate-700">คลิก หรือ ลากไฟล์รูปภาพมาวางที่นี่</p>
+                                <p class="text-xs text-slate-400">รองรับไฟล์ภาพถ่ายหรือเกียรติบัตร (.JPG, .PNG)</p>
+                            </div>
+
+                            <div id="previewContainer" class="hidden relative z-20 flex flex-col items-center gap-3">
+                                <img id="imagePreview" src="" alt="Preview" class="max-h-48 rounded-xl shadow-md border border-white">
+                                <div class="flex items-center gap-2 text-xs text-slate-600 bg-white px-3 py-1.5 rounded-full border border-slate-200">
+                                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+                                    <span id="fileNameDisplay" class="font-medium truncate max-w-xs"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 9. หมายเหตุ -->
+                    <div class="col-span-1 md:col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                            <i data-lucide="message-square" class="w-4 h-4 text-blue-600"></i>
+                            9. หมายเหตุ
+                        </label>
+                        <textarea id="remark" rows="3" 
+                            class="w-full px-4 py-3 bg-slate-50/50 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all duration-200"
+                            placeholder="ระบุหมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="pt-6 border-t border-slate-100 text-center">
+                    <button type="submit" id="submitBtn"
+                        class="w-full sm:w-auto px-10 py-3.5 bg-gradient-to-r from-blue-700 via-indigo-600 to-pink-600 hover:from-blue-800 hover:to-pink-700 text-white font-medium text-base rounded-2xl shadow-lg shadow-pink-500/20 hover:shadow-xl hover:shadow-pink-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 inline-flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-5 h-5"></i>
+                        <span>บันทึกข้อมูลการอบรม</span>
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <p class="text-center text-xs text-slate-400 mt-6">
+            © โรงเรียนบ้านน้ำสวยมิตรภาพที่ 19 • ระบบบันทึกและติดตามข้อมูลการพัฒนาบุคลากร
+        </p>
+    </div>
+
+    <!-- Modal สำหรับแสดงตารางประวัติการบันทึก -->
+    <div id="recordsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-pink-100">
+            <div class="p-6 bg-gradient-to-r from-blue-900 to-pink-600 text-white flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="list" class="w-6 h-6 text-pink-300"></i>
+                    <div>
+                        <h3 class="text-lg font-bold">รายการข้อมูลที่บันทึกแล้ว</h3>
+                        <p class="text-xs text-blue-100">แสดงรายการล่าสุดทั้งหมดในระบบ</p>
+                    </div>
+                </div>
+                <button onclick="closeRecordsModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1">
+                <div id="modalLoading" class="py-12 text-center text-slate-500">
+                    <div class="animate-spin w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full mx-auto mb-3"></div>
+                    กำลังโหลดประวัติข้อมูล...
+                </div>
+                <div id="recordsTableContainer" class="hidden overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-slate-800 font-semibold uppercase text-xs">
+                            <tr>
+                                <th class="p-3 rounded-l-xl">วันที่อบรม</th>
+                                <th class="p-3">ชื่อ-สกุล</th>
+                                <th class="p-3">เรื่อง/หลักสูตร</th>
+                                <th class="p-3">หน่วยงานที่จัด</th>
+                                <th class="p-3 rounded-r-xl text-center">หลักฐาน</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody" class="divide-y divide-slate-100">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        flatpickr("#dateRange", {
+            mode: "range",
+            dateFormat: "d/m/Y",
+            locale: "th",
+            disableMobile: "true"
+        });
+
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzLWDF0fK-6_eox-02sZzPJy6u-yRs0wKH_NPY_SEVOiBAWMulIoFpzCqqAd0vEblFx6w/exec";
+
+        function updateRecordCount() {
+            fetch(WEB_APP_URL)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        document.getElementById('recordBadge').textContent = data.count + " รายการ";
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('recordBadge').textContent = "0 รายการ";
+                });
+        }
+
+        updateRecordCount();
+        setInterval(updateRecordCount, 15000);
+
+        function openRecordsModal() {
+            const modal = document.getElementById('recordsModal');
+            const loading = document.getElementById('modalLoading');
+            const tableContainer = document.getElementById('recordsTableContainer');
+            const tableBody = document.getElementById('recordsTableBody');
+
+            modal.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            tableContainer.classList.add('hidden');
+            tableBody.innerHTML = '';
+
+            fetch(WEB_APP_URL + "?action=getRecords")
+                .then(res => res.json())
+                .then(data => {
+                    loading.classList.add('hidden');
+                    tableContainer.classList.remove('hidden');
+
+                    if (data.records && data.records.length > 0) {
+                        data.records.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.className = "hover:bg-slate-50/80 transition-colors";
+                            tr.innerHTML = `
+                                <td class="p-3 font-medium text-slate-800 whitespace-nowrap">${row.dateRange || '-'}</td>
+                                <td class="p-3 whitespace-nowrap">${row.name || '-'} <div class="text-xs text-slate-400">${row.position || ''}</div></td>
+                                <td class="p-3 font-medium text-blue-900">${row.topic || '-'}</td>
+                                <td class="p-3">${row.organizer || '-'}</td>
+                                <td class="p-3 text-center whitespace-nowrap">
+                                    ${row.fileUrl ? `<a href="${row.fileUrl}" target="_blank" class="inline-flex items-center gap-1 text-xs px-2.5 py-1 bg-pink-100 hover:bg-pink-200 text-pink-700 rounded-lg font-medium transition-colors"><i data-lucide="external-link" class="w-3.5 h-3.5"></i>เปิดดู</a>` : '-'}
+                                </td>
+                            `;
+                            tableBody.appendChild(tr);
+                        });
+                        lucide.createIcons();
+                    } else {
+                        tableBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">ยังไม่มีข้อมูลในระบบ</td></tr>`;
+                    }
+                })
+                .catch(err => {
+                    loading.classList.add('hidden');
+                    tableContainer.classList.remove('hidden');
+                    tableBody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">ไม่สามารถโหลดข้อมูลได้</td></tr>`;
+                });
+        }
+
+        function closeRecordsModal() {
+            document.getElementById('recordsModal').classList.add('hidden');
+        }
+
+        const evidenceInput = document.getElementById('evidence');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+        evidenceInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    imagePreview.src = evt.target.result;
+                    fileNameDisplay.textContent = file.name;
+                    uploadPlaceholder.classList.add('hidden');
+                    previewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('trainingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const file = evidenceInput.files[0];
+
+            if (!file) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'กรุณาแนบหลักฐาน',
+                    text: 'โปรดอัปโหลดภาพถ่ายหรือเกียรติบัตรการอบรม',
+                    confirmButtonColor: '#db2777'
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'ระบบกำลังอัปโหลดรูปภาพลง Google Drive และบันทึกลงชีต',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Data = event.target.result;
+
+                const payload = {
+                    dateRange: document.getElementById('dateRange').value,
+                    name: document.getElementById('name').value,
+                    position: document.getElementById('position').value,
+                    rank: document.getElementById('rank').value,
+                    topic: document.getElementById('topic').value,
+                    organizer: document.getElementById('organizer').value,
+                    location: document.getElementById('location').value,
+                    remark: document.getElementById('remark').value,
+                    evidenceBase64: base64Data,
+                    evidenceName: file.name
+                };
+
+                fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(payload)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        if (result.count !== undefined) {
+                            document.getElementById('recordBadge').textContent = result.count + " รายการ";
+                        } else {
+                            updateRecordCount();
+                        }
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'บันทึกข้อมูลสำเร็จ!',
+                            text: 'ระบบได้ทำการบันทึกข้อมูลของคุณเรียบร้อยแล้ว',
+                            confirmButtonColor: '#2563eb',
+                            confirmButtonText: 'ตกลง'
+                        }).then(() => {
+                            document.getElementById('trainingForm').reset();
+                            uploadPlaceholder.classList.remove('hidden');
+                            previewContainer.classList.add('hidden');
+                            imagePreview.src = '';
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'เกิดข้อผิดพลาด',
+                            text: result.message,
+                            confirmButtonColor: '#db2777'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'การเชื่อมต่อผิดพลาด',
+                        text: 'ไม่สามารถส่งข้อมูลไปยังเซิร์ฟเวอร์ได้: ' + error,
+                        confirmButtonColor: '#db2777'
+                    });
+                });
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>
